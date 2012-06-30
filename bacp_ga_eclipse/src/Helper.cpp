@@ -7,19 +7,20 @@
 
 #include "Helper.h"
 #include <iostream>
+#include <string>
 using std::cout;
 using std::endl;
+using std::string;
+using std::vector;
 
 Helper::Helper() {
-	// TODO Auto-generated constructor stub
-
+	delims = " \t\r\n;}<>";
 }
 
 Helper::~Helper() {
-	// TODO Auto-generated destructor stub
 }
 
-Helper::trim(std::string const& source, char const* delims = " \t\r\n;}<>")
+std::string Helper::trim(std::string const& source)
 {
 	  std::string result(source);
 	  std::string::size_type index = result.find_last_not_of(delims);
@@ -34,7 +35,7 @@ Helper::trim(std::string const& source, char const* delims = " \t\r\n;}<>")
 	  return result;
 }
 
-void print_string_vector(std::vector<std::string> myvector)
+void string_vector(vector<string> myvector)
 {
         for (int i = 0; i < myvector.size(); i++)
         {
@@ -42,14 +43,14 @@ void print_string_vector(std::vector<std::string> myvector)
         }
 }
 
-Helper::print_int_vector(std::vector<int> myvector)
+void Helper::print_int_vector(std::vector<int> myvector)
 {
         for (int i = 0; i < myvector.size(); i++)
         {
                 cout << "Vector[" << i << "] = " << myvector[i] << endl;
         }
 }
-Helper::print_vector_vector_int(std::vector< std::vector<int> > matrix)
+void Helper::print_vector_vector_int(std::vector< std::vector<int> > matrix)
 {
     for (int i = 0; i < matrix.size(); i++)
     {
@@ -64,7 +65,7 @@ Helper::print_vector_vector_int(std::vector< std::vector<int> > matrix)
         }
     }
 }
-Helper::find_in_string_vector(std::string lost, std::vector<std::string> place)
+int Helper::find_in_string_vector(std::string lost, std::vector<std::string> place)
 {
         for (int i=0; i< place.size(); i++)
         {

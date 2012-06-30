@@ -13,8 +13,10 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <string>
 using std::ifstream;
 using std::vector;
+using std::string;
 
 class Config {
 public:
