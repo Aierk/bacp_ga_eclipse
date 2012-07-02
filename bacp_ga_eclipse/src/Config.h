@@ -29,10 +29,12 @@ public:
 	int max_courses;
 	vector<std::string> courses;
 	vector<int> credits;
+	vector<int> max_period;
 	vector<vector<int> > prereq;
 	void getData();
 	void printParameters();
 	bool file_ok;
+	void calc_min_period();
 
 protected:
 	char* file_path;
@@ -45,6 +47,7 @@ protected:
 	std::string master_course;
 	std::string req_course;
 	Helper helper;
+	void post_req(int course, int actual);
 
 
 

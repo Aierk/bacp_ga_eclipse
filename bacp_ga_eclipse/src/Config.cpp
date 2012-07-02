@@ -21,6 +21,12 @@ Config::Config(char const* path) {
 	file.open(path);
 	if (!file.good())
 		file_ok = false;
+	getData();
+	max_period.resize(courses.size());
+	for (int i = 0; i < courses.size(); i++)
+	{
+		max_period[i] = 0;
+	}
 }
 
 Config::~Config() {
@@ -186,3 +192,23 @@ void Config::printParameters()
 	helper.print_vector_vector_int(prereq);
 }
 
+void Config::calc_min_period()
+{
+	for (int i = 0; i < courses.size(); i++)
+	{
+		post_req(i,0);
+	}
+}
+
+void Config::post_req(int course, int actual)
+{
+	if (prereq[course].size() == 0)
+	{
+		if (max_period[course] < actual){  max_period[course] = actual;}
+		return;
+	}
+	for (int i=0; i < prereq[course].size(); i++)
+	{
+		post_req(prereq[course][i],actual +1);
+	}
+}
