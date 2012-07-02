@@ -22,7 +22,10 @@ public:
 	float c_fitness;
 	void set_fitness();
 	void gen_chromosome(Config& config);
-	void print_me();
+	void gen_new(Config& config);
+	void print_me(Config& config);
+protected:
+	bool is_ready();
 };
 
 #endif /* GENOME_H_ */

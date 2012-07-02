@@ -190,6 +190,7 @@ void Config::printParameters()
 	helper.print_int_vector(credits);
 	cout << "Pre-requisitos: " << endl;
 	helper.print_vector_vector_int(prereq);
+	cout << "END" << endl;
 }
 
 void Config::calc_min_period()
@@ -198,13 +199,14 @@ void Config::calc_min_period()
 	{
 		post_req(i,0);
 	}
+	helper.print_int_vector(max_period);
 }
 
 void Config::post_req(int course, int actual)
 {
+	if (max_period[course] < actual){  max_period[course] = actual;}
 	if (prereq[course].size() == 0)
 	{
-		if (max_period[course] < actual){  max_period[course] = actual;}
 		return;
 	}
 	for (int i=0; i < prereq[course].size(); i++)

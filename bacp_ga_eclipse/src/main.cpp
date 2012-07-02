@@ -16,8 +16,9 @@ int main (int argc, char const *argv[])
 	conf.printParameters();
 	conf.calc_min_period();
 	Genome g (conf.courses.size());
-	g.gen_chromosome(conf);
-	g.print_me();
+	//g.gen_chromosome(conf);
+	g.gen_new(conf);
+	g.print_me(conf);
 }
 
 
