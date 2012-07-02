@@ -13,8 +13,8 @@ using std::cout;
 int main (int argc, char const *argv[])
 {
 	Config conf(argv[1]);
-	conf.getData();
 	conf.printParameters();
+	conf.calc_min_period();
 	Genome g (conf.courses.size());
 	g.gen_chromosome(conf);
 	g.print_me();

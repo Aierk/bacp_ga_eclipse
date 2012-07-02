@@ -15,7 +15,6 @@
 using namespace std;
 
 Genome::Genome(){
-	srand(time(0));
 };
 
 Genome::Genome(int size ) {
@@ -32,6 +31,7 @@ Genome::~Genome() {
 
 void Genome::gen_chromosome(Config& config)
 {
+	srand(time(0));
 	for (int i = 1; i <= config.periods; i++) //Iterecion periodo
 	{
 		vector<int> ramos_instanciables;
@@ -49,6 +49,7 @@ void Genome::gen_chromosome(Config& config)
 					}
 				}
 			}
+			if (config.periods - i < config.max_period[j]) continue;
 			//En este punto, No esta instanciado y sus requisitos estan OK. Se agrega al arreglo de posibles
 			ramos_instanciables.push_back(j);
 		} // Fin de la creación de ramos instanciables.
