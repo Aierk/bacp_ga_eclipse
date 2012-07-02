@@ -90,6 +90,7 @@ void Genome::print_me(Config& config)
 		}
 		cout << endl;
 	}
+	cout << endl;;
 }
 
 bool Genome::is_ready()
@@ -116,11 +117,11 @@ int Genome::calc_all_done()
 void Genome::gen_new(Config& config)
 {
 	calc_all_done();
-	srand(time(0));
+
 	bool problem = false;
 	int sum_restantes = 0;//Almacena la suma de weas sin instanciar
 	sum_restantes = all_done;
-
+	unsigned long int iseed;
 	while(!is_ready())
 	{
 		for (int i = 1; i <= config.periods; i++) //Iterecion periodo
@@ -170,6 +171,8 @@ void Genome::gen_new(Config& config)
 					total_creditos = total_creditos + config.credits[w];
 				}
 			}
+			//iseed = (iseed + time(0));
+			//srand(iseed); //Problema
 			int pos_candidato = rand()%ramos_instanciables.size();
 			int candidato = ramos_instanciables[pos_candidato];
 			if (total_creditos + config.credits[candidato] > config.max_load) {}

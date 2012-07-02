@@ -9,9 +9,12 @@
 using std::cout;
 #include "Config.h"
 #include "Genome.h"
+#include <ctime>
+#include <cstdlib>
 
 int main (int argc, char const *argv[])
 {
+	srand(time(0));
 	Config conf(argv[1]);
 //	conf.printParameters();
 	conf.calc_min_period();
@@ -22,8 +25,6 @@ int main (int argc, char const *argv[])
 	{
 		Genome* g = new Genome (conf.courses.size());
 		g->gen_new(conf);
-//		cout << g->all_done << std::endl;
-		cout << time(NULL) << std::endl;
 		if (g->all_done == 0){
 			g->print_me(conf);
 			n++;
