@@ -13,12 +13,23 @@ using std::cout;
 int main (int argc, char const *argv[])
 {
 	Config conf(argv[1]);
-	conf.printParameters();
+//	conf.printParameters();
 	conf.calc_min_period();
-	Genome g (conf.courses.size());
+
 	//g.gen_chromosome(conf);
-	g.gen_new(conf);
-	g.print_me(conf);
+	int n = 0;
+	while(n != 50)
+	{
+		Genome* g = new Genome (conf.courses.size());
+		g->gen_new(conf);
+//		cout << g->all_done << std::endl;
+		cout << time(NULL) << std::endl;
+		if (g->all_done == 0){
+			g->print_me(conf);
+			n++;
+		}
+		delete g;
+	}
 }
 
 

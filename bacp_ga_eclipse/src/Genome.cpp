@@ -18,6 +18,7 @@ Genome::Genome(){
 };
 
 Genome::Genome(int size ) {
+	all_done = 0;
 	Chromosome.resize(size);
 	for (int  i = 0; i< size; i++)
 	{
@@ -95,14 +96,31 @@ bool Genome::is_ready()
 {
 	for (int i=0; i < Chromosome.size();i++)
 	{
-		if (Chromosome[i] == 0) return false;
+		if (Chromosome[i] == 0)
+		{
+			return false;
+		}
 	}
 	return true;
 }
 
+int Genome::calc_all_done()
+{
+	all_done = 0;
+	for (int i = 0; i < Chromosome.size(); i++)
+	{
+		if(Chromosome[i] == 0) all_done++;
+	}
+}
+
 void Genome::gen_new(Config& config)
 {
+	calc_all_done();
 	srand(time(0));
+	bool problem = false;
+	int sum_restantes = 0;//Almacena la suma de weas sin instanciar
+	sum_restantes = all_done;
+
 	while(!is_ready())
 	{
 		for (int i = 1; i <= config.periods; i++) //Iterecion periodo
@@ -112,16 +130,22 @@ void Genome::gen_new(Config& config)
 			{
 				if (Chromosome[j] != 0) continue; //ramo instanciado, nada que hacer
 
+				bool allgood = true;
 				if (config.prereq[j].size() != 0) //Tiene prerequisitos
 				{
 					for (int k=0; k < config.prereq[j].size(); k++) //  iteracion en prerquisitos
 					{
-						if (Chromosome[config.prereq[j][k]] < i) // Un prerequisito no instanciado salimos de for de ramos
+						if (Chromosome[config.prereq[j][k]] >= i) //requisito instanciado en el mismo semestreo o superior
 						{
-							continue;
+							allgood = false;
+						}
+						if (Chromosome[config.prereq[j][k]] == 0)
+						{
+							allgood = false;
 						}
 					}
 				}
+				if (!allgood) continue; // No agregar como curso posible.
 				if (config.periods - i < config.max_period[j]) continue;
 				//En este punto, No esta instanciado y sus requisitos estan OK. Se agrega al arreglo de posibles
 				ramos_instanciables.push_back(j);
@@ -129,7 +153,13 @@ void Genome::gen_new(Config& config)
 
 			//Iniciamos la instanciación
 
-			if (ramos_instanciables.size() == 0) continue;
+			if (ramos_instanciables.size() == 0)
+				{
+					//problem = true;
+					continue;
+				}
+			problem = false;
+			//TODO: Es posible 1 ramo que no caiga en ningun lado. WHILE infinito solucionar
 			int total_creditos = 0;
 			int total_ramos = 0;
 			for (int w=0; w < Chromosome.size(); w++)
@@ -152,7 +182,12 @@ void Genome::gen_new(Config& config)
 			}
 			ramos_instanciables.erase(ramos_instanciables.begin()+pos_candidato);
 		}
+		calc_all_done();
+		if(all_done == sum_restantes) break; //Si en un ciclo completo no se instancio nada.. no se encontro solucin
+		sum_restantes = all_done; //Actualiza el valor del # de ramos sin instanciar despues deun ciclo completo
+		if(problem) break;
 	}
+
 }
 
 

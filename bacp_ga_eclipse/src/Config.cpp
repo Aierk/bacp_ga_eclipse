@@ -199,7 +199,6 @@ void Config::calc_min_period()
 	{
 		post_req(i,0);
 	}
-	helper.print_int_vector(max_period);
 }
 
 void Config::post_req(int course, int actual)

@@ -24,8 +24,10 @@ public:
 	void gen_chromosome(Config& config);
 	void gen_new(Config& config);
 	void print_me(Config& config);
+	int all_done;
 protected:
 	bool is_ready();
+	int calc_all_done();
 };
 
 #endif /* GENOME_H_ */
