@@ -23,10 +23,10 @@ int main (int argc, char const *argv[])
 	int n = 0;
 	while(n != 50)
 	{
-		Genome* g = new Genome (conf.courses.size());
-		g->gen_new(conf);
+		Genome* g = new Genome (&conf);
+		g->gen_new();
 		if (g->all_done == 0){
-			g->print_me(conf);
+			g->print_me();
 			n++;
 		}
 		delete g;

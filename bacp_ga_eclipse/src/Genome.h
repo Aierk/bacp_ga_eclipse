@@ -14,20 +14,23 @@ using std::vector;
 class Genome {
 public:
 	Genome ();
-	Genome(int size);
+	Genome(Config* c);
 	virtual ~Genome();
 	vector <int> Chromosome;
 	float fitness;
 	float r_fitness;
 	float c_fitness;
 	void set_fitness();
-	void gen_chromosome(Config& config);
-	void gen_new(Config& config);
-	void print_me(Config& config);
+	void gen_chromosome();
+	void gen_new();
+	void print_me();
 	int all_done;
+	void Fitness();
 protected:
+	Config* config;
 	bool is_ready();
 	int calc_all_done();
+	vector <int> credits_per_period;
 };
 
 #endif /* GENOME_H_ */
