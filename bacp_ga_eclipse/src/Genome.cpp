@@ -25,8 +25,8 @@ Genome::Genome(Config* c ) {
 	{
 		Chromosome[i] = 0;
 	}
-	config = c;
-
+	this->credits_per_period.resize(this->config->periods + 1);
+	for (size_t i=0; i < this->credits_per_period.size(); i++) this->credits_per_period[i] = 0;
 }
 
 Genome::~Genome() {
@@ -87,6 +87,7 @@ void Genome::print_me()
 	for (int i = 1; i <= config->periods; i++)
 	{
 		cout << "Periodo " << i << " : ";
+		cout << "[" << this->credits_per_period[i] << "] ";
 		for (int j = 0; j < config->courses.size(); j++)
 		{
 			if (Chromosome[j] == i) cout << config->courses[j] << " - ";
@@ -117,6 +118,29 @@ int Genome::calc_all_done()
 	}
 }
 
+void Genome::calc_credits_per_period()
+{
+	for (size_t i=0; i < this->credits_per_period.size(); i++)
+	{
+		this->credits_per_period[i] = 0;
+	}
+	for (size_t i=0; i < this->Chromosome.size(); i++)
+	{
+		this->credits_per_period[this->Chromosome[i]] = this->credits_per_period[this->Chromosome[i]] + this->config->credits[i];
+	}
+}
+bool Genome::all_min_ok(int p)
+{
+	this->calc_credits_per_period();
+	for (size_t i=1; i < this->credits_per_period.size(); i++)
+	{
+		if ( this->credits_per_period[i] < this->config->min_load && this->credits_per_period[p] >= this->config->min_load) return false;
+
+	}
+	return true;
+
+}
+
 void Genome::gen_new()
 {
 	calc_all_done();
@@ -129,14 +153,14 @@ void Genome::gen_new()
 		for (int i = 1; i <= config->periods; i++) //Iterecion periodo
 		{
 			vector<int> ramos_instanciables;
-			for (int j =0; j < config->courses.size(); j++) // iteración de ramos
+			for (size_t j =0; j < config->courses.size(); j++) // iteración de ramos
 			{
 				if (Chromosome[j] != 0) continue; //ramo instanciado, nada que hacer
 
 				bool allgood = true;
 				if (config->prereq[j].size() != 0) //Tiene prerequisitos
 				{
-					for (int k=0; k < config->prereq[j].size(); k++) //  iteracion en prerquisitos
+					for (size_t k=0; k < config->prereq[j].size(); k++) //  iteracion en prerquisitos
 					{
 						if (Chromosome[config->prereq[j][k]] >= i) //requisito instanciado en el mismo semestreo o superior
 						{
@@ -165,7 +189,7 @@ void Genome::gen_new()
 			//TODO: Es posible 1 ramo que no caiga en ningun lado. WHILE infinito solucionar
 			int total_creditos = 0;
 			int total_ramos = 0;
-			for (int w=0; w < Chromosome.size(); w++)
+			for (size_t w=0; w < Chromosome.size(); w++)
 			{
 				if (Chromosome[w] == i)
 				{
@@ -173,17 +197,21 @@ void Genome::gen_new()
 					total_creditos = total_creditos + config->credits[w];
 				}
 			}
-			int pos_candidato = rand()%ramos_instanciables.size();
-			int candidato = ramos_instanciables[pos_candidato];
-			if (total_creditos + config->credits[candidato] > config->max_load) {}
-			else if (total_ramos + 1 > config->max_courses) {}
-			else
+			while(ramos_instanciables.size() != 0 && this->all_min_ok(i) )
 			{
-				Chromosome[candidato] = i;
-				total_ramos = total_ramos + 1;
-				total_creditos = total_creditos + config->credits[candidato];
+				int pos_candidato = rand()%ramos_instanciables.size();
+
+				int candidato = ramos_instanciables[pos_candidato];
+				if (total_creditos + config->credits[candidato] > config->max_load) {}
+				else if (total_ramos + 1 > config->max_courses) {}
+				else
+				{
+					Chromosome[candidato] = i;
+					total_ramos = total_ramos + 1;
+					total_creditos = total_creditos + config->credits[candidato];
+				}
+				ramos_instanciables.erase(ramos_instanciables.begin()+pos_candidato);
 			}
-			ramos_instanciables.erase(ramos_instanciables.begin()+pos_candidato);
 		}
 		calc_all_done();
 		if(all_done == sum_restantes) break; //Si en un ciclo completo no se instancio nada.. no se encontro solucin
@@ -191,12 +219,14 @@ void Genome::gen_new()
 		if(problem) break;
 	}
 
+	//Set credits per periods
+	this->calc_credits_per_period();
 }
 
 void Genome::Fitness()
 {
 	//Set Credits per periods //sacar de aca
-	//for (site_t i = 0; i < );
+
 }
 
 

@@ -31,6 +31,8 @@ protected:
 	bool is_ready();
 	int calc_all_done();
 	vector <int> credits_per_period;
+	bool all_min_ok(int p);
+	void calc_credits_per_period();
 };
 
 #endif /* GENOME_H_ */
