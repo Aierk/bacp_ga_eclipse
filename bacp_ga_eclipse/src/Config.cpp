@@ -182,7 +182,6 @@ void Config::calc_max_balance()
 		this->max_balance = this->max_balance + this->credits[i];
 	}
 	this->max_balance = this->max_balance / this->periods;
-	cout << this->max_balance << endl;
 }
 
 

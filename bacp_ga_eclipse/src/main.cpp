@@ -9,6 +9,7 @@
 using std::cout;
 #include "Config.h"
 #include "Genome.h"
+#include "GA.h"
 #include <ctime>
 #include <cstdlib>
 
@@ -20,19 +21,8 @@ int main (int argc, char const *argv[])
 	conf.calc_min_period();
 	conf.calc_max_balance();
 
-	int n = 0;
-
-
-	while(n != 50)
-	{
-		Genome* g = new Genome (&conf);
-		g->gen_new();
-		if (g->all_done == 0){
-			g->print_me();
-			n++;
-		}
-		delete g;
-	}
+	GA metodo (8,10, &conf);
+	metodo.initial_population();
 }
 
 
