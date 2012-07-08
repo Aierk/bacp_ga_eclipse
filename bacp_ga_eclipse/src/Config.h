@@ -36,6 +36,7 @@ public:
 	bool file_ok;
 	void calc_min_period();
 	float max_balance;
+	void calc_max_balance();
 
 protected:
 	char* file_path;
@@ -49,9 +50,6 @@ protected:
 	std::string req_course;
 	Helper helper;
 	void post_req(int course, int actual);
-
-
-
 };
 
 #endif /* CONFIG_H_ */

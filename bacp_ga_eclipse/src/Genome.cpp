@@ -235,6 +235,7 @@ void Genome::Fitness()
 		if (temp < 0) current_fitness = current_fitness - temp;
 		else current_fitness = current_fitness + temp;
 	} //Calculo de sum{|p_i - w|} finalizado.
+
 	this->fitness = current_fitness;
 	this->calc_all_done(); 	// Al done es el numero de ramos no instanciados.
 
@@ -249,7 +250,6 @@ void Genome::Fitness()
 			if (this->Chromosome[this->config->prereq[i][j]] >= this->Chromosome[i]) prereq_broken = prereq_broken +1;
 		}
 	}
-
 	this->fitness = this->fitness + this->fitness*(prereq_broken/10);
 }
 

@@ -171,12 +171,20 @@ void Config::getData()
 	    found = line.find("}");
 	    if (found != std::string::npos) break;
 	 }
+
+}
+
+void Config::calc_max_balance()
+{
 	// Calculo de max_balance
 	for (size_t i = 0; i < this->credits.size(); i++)
 	{
 		this->max_balance = this->max_balance + this->credits[i];
 	}
+	this->max_balance = this->max_balance / this->periods;
+	cout << this->max_balance << endl;
 }
+
 
 void Config::printParameters()
 {
