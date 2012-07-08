@@ -23,6 +23,7 @@ Config::Config(char const* path) {
 		file_ok = false;
 	getData();
 	max_period.resize(courses.size());
+	this->max_balance = 0.0;
 	for (int i = 0; i < courses.size(); i++)
 	{
 		max_period[i] = 0;
@@ -170,6 +171,11 @@ void Config::getData()
 	    found = line.find("}");
 	    if (found != std::string::npos) break;
 	 }
+	// Calculo de max_balance
+	for (size_t i = 0; i < this->credits.size(); i++)
+	{
+		this->max_balance = this->max_balance + this->credits[i];
+	}
 }
 
 void Config::printParameters()

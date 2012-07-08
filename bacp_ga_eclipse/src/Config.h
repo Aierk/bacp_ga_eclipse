@@ -35,6 +35,7 @@ public:
 	void printParameters();
 	bool file_ok;
 	void calc_min_period();
+	float max_balance;
 
 protected:
 	char* file_path;

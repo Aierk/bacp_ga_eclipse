@@ -84,11 +84,12 @@ void Genome::gen_chromosome()
 
 void Genome::print_me()
 {
+	cout << "Fitness: " << this->fitness << endl;
 	for (int i = 1; i <= config->periods; i++)
 	{
 		cout << "Periodo " << i << " : ";
 		cout << "[" << this->credits_per_period[i] << "] ";
-		for (int j = 0; j < config->courses.size(); j++)
+		for (size_t j = 0; j < config->courses.size(); j++)
 		{
 			if (Chromosome[j] == i) cout << config->courses[j] << " - ";
 		}
@@ -112,7 +113,7 @@ bool Genome::is_ready()
 int Genome::calc_all_done()
 {
 	all_done = 0;
-	for (int i = 0; i < Chromosome.size(); i++)
+	for (size_t i = 0; i < Chromosome.size(); i++)
 	{
 		if(Chromosome[i] == 0) all_done++;
 	}
@@ -220,13 +221,36 @@ void Genome::gen_new()
 	}
 
 	//Set credits per periods
-	this->calc_credits_per_period();
+	this->Fitness();
 }
 
 void Genome::Fitness()
 {
-	//Set Credits per periods //sacar de aca
+	float current_fitness = 0.0;
+	this->calc_credits_per_period();
+	for (size_t i=0; i < this->credits_per_period.size(); i++)
+	{
+		float temp;
+		temp = this->config->max_balance - this->credits_per_period[i];
+		if (temp < 0) current_fitness = current_fitness - temp;
+		else current_fitness = current_fitness + temp;
+	} //Calculo de sum{|p_i - w|} finalizado.
+	this->fitness = current_fitness;
+	this->calc_all_done(); 	// Al done es el numero de ramos no instanciados.
 
+	this->fitness = this->fitness + this->fitness*(this->all_done/10); //castigo por ramos no instanciados
+
+	int prereq_broken = 0;
+	for (size_t i = 0; i < this->Chromosome.size(); i++)
+	{
+		for (size_t j=0; j < this->config->prereq[i].size(); j++)
+		{
+			if (this->Chromosome[this->config->prereq[i][j]] == 0) prereq_broken = prereq_broken +1;
+			if (this->Chromosome[this->config->prereq[i][j]] >= this->Chromosome[i]) prereq_broken = prereq_broken +1;
+		}
+	}
+
+	this->fitness = this->fitness + this->fitness*(prereq_broken/10);
 }
 
 

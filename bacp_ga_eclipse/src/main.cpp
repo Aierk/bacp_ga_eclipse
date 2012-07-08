@@ -18,9 +18,9 @@ int main (int argc, char const *argv[])
 	Config conf(argv[1]);
 //	conf.printParameters();
 	conf.calc_min_period();
-
 	//g.gen_chromosome(conf);
 	int n = 0;
+
 	while(n != 50)
 	{
 		Genome* g = new Genome (&conf);
