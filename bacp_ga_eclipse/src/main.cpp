@@ -7,8 +7,10 @@
 
 #include <iostream>
 using std::cout;
+using std::endl;
 #include "Config.h"
 #include "Genome.h"
+#include "Helper.h"
 #include "GA.h"
 #include <ctime>
 #include <cstdlib>
@@ -21,8 +23,9 @@ int main (int argc, char const *argv[])
 	conf.calc_min_period();
 	conf.calc_max_balance();
 
-	GA metodo (8,10, &conf);
-	metodo.initial_population();
+
+	GA metodo (50,100, &conf, 0.7, 0.3);
+	metodo.run();
 }
 
 

@@ -17,9 +17,34 @@ using namespace std;
 Genome::Genome(){
 };
 
+Genome::Genome(vector <int> adn, Config* c)
+{
+	this->c_fitness = 0.0;
+	this->fitness = 0.0;
+	this->r_fitness = 0.0;
+	this->i_fitness = 0.0;
+	this->all_done = 0;
+	this->config = c;
+	Chromosome.resize(config->courses.size());
+	for (int  i = 0; i< c->courses.size(); i++)
+	{
+		Chromosome[i] = adn[i];
+	}
+	this->credits_per_period.resize(this->config->periods + 1);
+	for (size_t i=0; i < this->credits_per_period.size(); i++) this->credits_per_period[i] = 0;
+	this->calc_credits_per_period();
+	this->calc_all_done();
+	this->Fitness();
+
+}
+
 Genome::Genome(Config* c ) {
 	all_done = 0;
 	config = c;
+	this->c_fitness = 0.0;
+	this->fitness = 0.0;
+	this->r_fitness = 0.0;
+	this->i_fitness = 0.0;
 	Chromosome.resize(config->courses.size());
 	for (int  i = 0; i< c->courses.size(); i++)
 	{
@@ -85,6 +110,9 @@ void Genome::gen_chromosome()
 void Genome::print_me()
 {
 	cout << "Fitness: " << this->fitness << endl;
+	cout << "i.Fitness: " << this->i_fitness << endl;
+	cout << "C.Fitness: " << this->c_fitness << endl;
+	cout << "R.Fitness: " << this->r_fitness << endl;
 	for (int i = 1; i <= config->periods; i++)
 	{
 		cout << "Periodo " << i << " : ";
@@ -251,6 +279,31 @@ void Genome::Fitness()
 		}
 	}
 	this->fitness = this->fitness + this->fitness*(prereq_broken/10);
+
+	for (size_t i =1; i < this->credits_per_period.size(); i++)
+	{
+		if (this->credits_per_period[i] < this->config->min_load)
+			this->fitness = this->fitness + this->fitness*(this->config->min_load - this->config->min_load)/10;
+		if (this->credits_per_period[i] > this->config->max_load)
+					this->fitness = this->fitness + this->fitness*(this->config->max_load - this->credits_per_period[i])/10;
+	}
+
+	//Inversor de fitness para invertir min a max.
+	this->i_fitness = 1 / this->fitness;
 }
+
+void Genome::re_calc_stats()
+{
+	this->c_fitness = 0.0;
+	this->fitness = 0.0;
+	this->r_fitness = 0.0;
+	this->i_fitness = 0.0;
+	this->all_done = 0;
+	this->calc_credits_per_period();
+	this->calc_all_done();
+	this->Fitness();
+
+}
+
 
 
