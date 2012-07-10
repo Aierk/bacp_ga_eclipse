@@ -182,13 +182,16 @@ void GA::run()
 	this->set_rfitness();
 
 	int generation = 1;
+	this->mutate_ok = 2*this->mutate_ok;
 	while(generation <= this->generations)
 	{
-		std::cout << "Mejor de la generacion " << generation << std::endl;
+		if (generation > generations/2) this->mutate_ok = this->mutate_ok/2;
+		std::cout << "Mejor de la generacion " << generation << ": ";
 		this->elite();
-		std::cout << this->new_population[0].fitness << std::endl;
-		this->new_population[0].print_me();
-		std::cout << "---" << std::endl;
+		std::cout << this->new_population[0].fitness;
+		std::cout << ". Castigos: " << this->new_population[0].castigos << std::endl;
+		//this->new_population[0].print_me();
+		//std::cout << "---" << std::endl;
 		/*this->population[0].print_me();
 		this->population[1].print_me();*/
 		while (this->new_population.size() != this->size)

@@ -22,6 +22,7 @@ public:
 	float r_fitness;
 	float c_fitness;
 	float i_fitness;
+	int castigos;
 	void set_fitness();
 	void gen_chromosome();
 	void gen_new();

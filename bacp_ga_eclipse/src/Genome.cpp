@@ -19,6 +19,7 @@ Genome::Genome(){
 
 Genome::Genome(vector <int> adn, Config* c)
 {
+	this->castigos = 0;
 	this->c_fitness = 0.0;
 	this->fitness = 0.0;
 	this->r_fitness = 0.0;
@@ -39,6 +40,7 @@ Genome::Genome(vector <int> adn, Config* c)
 }
 
 Genome::Genome(Config* c ) {
+	this->castigos = 0;
 	all_done = 0;
 	config = c;
 	this->c_fitness = 0.0;
@@ -111,8 +113,9 @@ void Genome::print_me()
 {
 	cout << "Fitness: " << this->fitness << endl;
 	cout << "i.Fitness: " << this->i_fitness << endl;
-	cout << "C.Fitness: " << this->c_fitness << endl;
 	cout << "R.Fitness: " << this->r_fitness << endl;
+	cout << "C.Fitness: " << this->c_fitness << endl;
+	cout << "Castigos:" << this->castigos << endl;
 	for (int i = 1; i <= config->periods; i++)
 	{
 		cout << "Periodo " << i << " : ";
@@ -255,6 +258,7 @@ void Genome::gen_new()
 void Genome::Fitness()
 {
 	float current_fitness = 0.0;
+	this->castigos = 0;
 	this->calc_credits_per_period();
 	for (size_t i=0; i < this->credits_per_period.size(); i++)
 	{
@@ -279,16 +283,25 @@ void Genome::Fitness()
 		}
 	}
 	this->fitness = this->fitness + this->fitness*(prereq_broken/10);
+	this->castigos = prereq_broken;
 
 	for (size_t i =1; i < this->credits_per_period.size(); i++)
 	{
 		if (this->credits_per_period[i] < this->config->min_load)
+		{
 			this->fitness = this->fitness + this->fitness*(this->config->min_load - this->credits_per_period[i])/10;
+			this->castigos++;
+		}
+
 		if (this->credits_per_period[i] > this->config->max_load)
-					this->fitness = this->fitness + this->fitness*(this->credits_per_period[i] - this->config->max_load)/10;
+		{
+			this->fitness = this->fitness + this->fitness*(this->credits_per_period[i] - this->config->max_load)/10;
+			this->castigos++;
+		}
 	}
 
 	//Inversor de fitness para invertir min a max.
+	this->fitness = this->fitness + this->fitness * (this->castigos/10) + 2*this->castigos;
 	this->i_fitness = 1 / this->fitness;
 }
 
