@@ -42,14 +42,15 @@ void GA::initial_population()
 }
 void GA::elite()
 {
-	float max = 0.0;
-	for(int i=0; i < this->size; i++ )
+	float min = 0.0;
+	min = this->population[1].fitness;
+	for(int i=1; i < this->size; i++ )
 	{
-		if (this->population[i].fitness > max) max = this->population[i].fitness;
+		if (this->population[i].fitness < min) min = this->population[i].fitness;
 	}
 	for(int i=0; i < this->size; i++ )
 	{
-		if (this->population[i].fitness == max)
+		if (this->population[i].fitness == min)
 		{
 			this->to_new_pop(this->population[i].Chromosome);
 			return;
@@ -94,7 +95,7 @@ vector <int> GA::select_subject()
 
 	float p = rand()%1000 / 1000.0;
 	if ( p < this->population[0].c_fitness) return this->population[0].Chromosome;
-	for(int i=0; i < this->size -1 ; i++ )
+	for(int i=0; i < this->size-1 ; i++ )
 	{
 		if (p >= this->population[i].c_fitness && p < this->population[i+1].c_fitness) return this->population[i].Chromosome;
 	}
@@ -185,7 +186,11 @@ void GA::run()
 	{
 		std::cout << "Mejor de la generacion " << generation << std::endl;
 		this->elite();
+		std::cout << this->new_population[0].fitness << std::endl;
 		this->new_population[0].print_me();
+		std::cout << "---" << std::endl;
+		/*this->population[0].print_me();
+		this->population[1].print_me();*/
 		while (this->new_population.size() != this->size)
 		{
 			this->mutate();

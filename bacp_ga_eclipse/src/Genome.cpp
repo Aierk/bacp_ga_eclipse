@@ -283,9 +283,9 @@ void Genome::Fitness()
 	for (size_t i =1; i < this->credits_per_period.size(); i++)
 	{
 		if (this->credits_per_period[i] < this->config->min_load)
-			this->fitness = this->fitness + this->fitness*(this->config->min_load - this->config->min_load)/10;
+			this->fitness = this->fitness + this->fitness*(this->config->min_load - this->credits_per_period[i])/10;
 		if (this->credits_per_period[i] > this->config->max_load)
-					this->fitness = this->fitness + this->fitness*(this->config->max_load - this->credits_per_period[i])/10;
+					this->fitness = this->fitness + this->fitness*(this->credits_per_period[i] - this->config->max_load)/10;
 	}
 
 	//Inversor de fitness para invertir min a max.
