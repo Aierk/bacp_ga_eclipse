@@ -32,6 +32,7 @@ public:
 	vector <int> credits_per_period;
 	void re_calc_stats();
 	int max_period_load;
+	vector <string> problem;
 protected:
 	Config* config;
 	bool is_ready();

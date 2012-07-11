@@ -113,13 +113,17 @@ void GA::print_new_population()
 vector <int> GA::select_subject()
 {
 
-	float p = rand()%1000 / 1000.0;
+	float p = rand()%1000000 / 1000000.00;
 	if ( p < this->population[0].c_fitness) return this->population[0].Chromosome;
 	for(int i=1; i < this->size-1 ; i++ )
 	{
-		if (p >= this->population[i].c_fitness && p < this->population[i+1].c_fitness) return this->population[i].Chromosome;
+		if (p >= this->population[i].c_fitness && p < this->population[i+1].c_fitness)
+			{
+				return this->population[i].Chromosome;
+			}
 	}
 	return this->population[this->size -1].Chromosome;
+
 }
 void GA::to_new_pop(vector <int> c)
 {
@@ -226,7 +230,7 @@ void GA::run()
 	{
 		std::cout << "Gen(" << generation << "): ";
 		this->print_elite();
-		//this->elite();
+		this->elite();
 		while ((int)this->new_population.size() != this->size)
 		{
 			this->mutate();
@@ -239,4 +243,5 @@ void GA::run()
 		this->new_population.clear();
 		generation++;
 	}
+	if (this->population[0].problem.size() > 0) std::cout << this->population[0].problem[0] << std::endl;
 }

@@ -26,7 +26,7 @@ int main (int argc, char const *argv[])
 
 	//50,60,0.4,07 se ve bien
 
-	GA metodo (50,100, &conf, 0.1, 0.7);
+	GA metodo (30,200, &conf, 0.3, 0.7);
 	metodo.run();
 }
 
