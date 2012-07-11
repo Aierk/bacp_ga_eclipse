@@ -35,7 +35,7 @@ std::string Helper::trim(std::string const& source)
 	  return result;
 }
 
-void string_vector(vector<string> myvector)
+void Helper::string_vector(vector<string> myvector)
 {
         for (size_t i = 0; i < myvector.size(); i++)
         {
