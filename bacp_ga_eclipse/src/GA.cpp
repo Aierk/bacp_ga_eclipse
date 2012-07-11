@@ -232,11 +232,11 @@ void GA::run()
 	this->set_rfitness();
 
 	int generation = 1;
-	/*while(generation <= this->generations)
+	while(generation <= this->generations)
 	{
 		std::cout << "Gen(" << generation << "): ";
 		this->print_elite();
-		//this->elite();
+		this->elite();
 		while ((int)this->new_population.size() != this->size)
 		{
 			this->mutate();
@@ -251,11 +251,6 @@ void GA::run()
 	}
 	this->population[0].print_me();
 	if (this->population[0].problem.size() > 0) std::cout << this->population[0].problem[0] << std::endl;
-*/
-	std::cout << "-----------" << std::endl;
 
-	this->cross_over();
-	this->new_population[0].print_me();
-	this->new_population[1].print_me();
 
 }

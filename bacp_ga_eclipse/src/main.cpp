@@ -22,12 +22,11 @@ int main (int argc, char const *argv[])
 	Config conf(argv[1]);
 	conf.calc_min_period();
 	conf.calc_max_balance();
-	conf.printParameters();
 
 	//50,60,0.4,07 se ve bien
-
-	GA metodo (30,200, &conf, 0.3, 0.7);
+	GA metodo (30,100, &conf, 0.3, 0.7);
 	metodo.run();
+	conf.printParameters();
 }
 
 

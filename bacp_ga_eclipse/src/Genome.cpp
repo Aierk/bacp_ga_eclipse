@@ -312,7 +312,7 @@ void Genome::Fitness()
 	}
 
 	//Inversor de fitness para invertir min a max.
-	this->fitness = this->fitness + this->fitness * (this->castigos/10) + 4*this->castigos;
+	this->fitness = this->fitness + this->castigos;
 	this->i_fitness = 1 / this->fitness;
 }
 
