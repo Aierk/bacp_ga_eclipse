@@ -243,5 +243,6 @@ void GA::run()
 		this->new_population.clear();
 		generation++;
 	}
+	this->population[0].print_me();
 	if (this->population[0].problem.size() > 0) std::cout << this->population[0].problem[0] << std::endl;
 }

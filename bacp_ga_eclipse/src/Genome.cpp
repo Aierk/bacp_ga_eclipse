@@ -292,7 +292,7 @@ void Genome::Fitness()
 			if (this->Chromosome[this->config->prereq[i][j]] >= this->Chromosome[i]) prereq_broken = prereq_broken +1;
 		}
 	}
-	this->fitness = this->fitness + this->fitness*(prereq_broken);
+	this->fitness = this->fitness + 15*(prereq_broken);
 	this->castigos = prereq_broken;
 	if(prereq_broken != 0) this->problem.push_back("rereq");
 
