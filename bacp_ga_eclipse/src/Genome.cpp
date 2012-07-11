@@ -292,7 +292,7 @@ void Genome::Fitness()
 			if (this->Chromosome[this->config->prereq[i][j]] >= this->Chromosome[i]) prereq_broken = prereq_broken +1;
 		}
 	}
-	this->fitness = this->fitness + this->config->max_balance*(prereq_broken);
+	//this->fitness = this->fitness + this->config->max_balance*(prereq_broken)/2;
 	this->castigos = prereq_broken;
 	if(prereq_broken != 0) this->problem.push_back("rereq"); //sacar
 
@@ -300,19 +300,19 @@ void Genome::Fitness()
 	{
 		if (this->credits_per_period[i] < this->config->min_load)
 		{
-			this->fitness = this->fitness + this->fitness*(this->config->min_load - this->credits_per_period[i])/10;
+			//this->fitness = this->fitness + this->fitness*(this->config->min_load - this->credits_per_period[i])/10;
 			this->castigos++;
 		}
 
 		if (this->credits_per_period[i] > this->config->max_load)
 		{
-			this->fitness = this->fitness + this->fitness*(this->credits_per_period[i] - this->config->max_load)/10;
+			//this->fitness = this->fitness + this->fitness*(this->credits_per_period[i] - this->config->max_load)/10;
 			this->castigos++;
 		}
 	}
 
 	//Inversor de fitness para invertir min a max.
-	this->fitness = this->fitness + this->castigos;
+	this->fitness = this->fitness*(1+this->castigos);
 	this->i_fitness = 1 / this->fitness;
 }
 

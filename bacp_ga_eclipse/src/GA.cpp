@@ -226,6 +226,51 @@ void GA::cross_over()
 
 	}
 }
+
+void GA::cross_over_period()
+{
+	float p = rand()%1000 / 1000.0;
+	if (p > this->cross_over_ok) return;
+	// C herada fuertemente de a
+	// d hereda fuertemente de b
+	vector <int> a;
+	vector <int> b;
+	a = this->select_subject();
+	b = this->select_subject();
+	vector <int> c (a.size());
+	vector <int> d (b.size()) ;
+
+	for (size_t i = 0; i < a.size(); i++)
+	{
+		c[i] = a[i];
+		d[i] = b[i];
+	}
+
+	int pos = (rand() % this->config->periods) + 1;
+	while(pos == 1 || pos == this->config->periods) pos = (rand() % this->config->periods) + 1; //Semestre random elegido
+
+	for (int i = pos; i <= this->config->periods; i++)
+	{
+		for (size_t i = 0; i < a.size(); i++)
+		{
+				if( this->config->skeleton[i] == 1) continue;
+				if(a[i] == pos)
+				{
+					d[i] = a[i];
+					c[i] = b[i];
+				}
+				if(b[i] == pos)
+				{
+					c[i] = b[i];
+					d[i] = a[i];
+				}
+		}
+
+	}
+	this->to_new_pop(c);
+	this->to_new_pop(d);
+}
+
 void GA::run()
 {
 	this->initial_population();
@@ -240,7 +285,8 @@ void GA::run()
 		while ((int)this->new_population.size() != this->size)
 		{
 			this->mutate();
-			this->cross_over();
+			this->cross_over_period();
+			//this->cross_over();
 			//this->mutate_blind();
 		}
 		this->population.clear();
@@ -249,8 +295,6 @@ void GA::run()
 		this->new_population.clear();
 		generation++;
 	}
-	this->population[0].print_me();
-	if (this->population[0].problem.size() > 0) std::cout << this->population[0].problem[0] << std::endl;
-
-
+	this->elite();
+	this->new_population[0].print_me();
 }

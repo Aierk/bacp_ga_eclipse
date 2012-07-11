@@ -28,6 +28,7 @@ public:
 	void mutate();
 	void mutate_blind();
 	void cross_over();
+	void cross_over_period();
 	void run();
 protected:
 	Config* config;
