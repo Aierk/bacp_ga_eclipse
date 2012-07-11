@@ -113,7 +113,7 @@ void GA::print_new_population()
 vector <int> GA::select_subject()
 {
 
-	float p = rand()%1000000 / 1000000.00;
+	float p = rand()%1000 / 1000.00;
 	if ( p < this->population[0].c_fitness) return this->population[0].Chromosome;
 	for(int i=1; i < this->size-1 ; i++ )
 	{
@@ -211,8 +211,14 @@ void GA::cross_over()
 			}
 			else
 			{
-				d[i] = a[i];
-				c[i] = b[i];
+				if(this->config->skeleton[i] == 0){
+					d[i] = a[i];
+					c[i] = b[i];
+				}else
+				{
+					c[i] = a[i];
+					d[i] = b[i];
+				}
 			}
 		}
 		this->to_new_pop(c);
@@ -226,11 +232,11 @@ void GA::run()
 	this->set_rfitness();
 
 	int generation = 1;
-	while(generation <= this->generations)
+	/*while(generation <= this->generations)
 	{
 		std::cout << "Gen(" << generation << "): ";
 		this->print_elite();
-		this->elite();
+		//this->elite();
 		while ((int)this->new_population.size() != this->size)
 		{
 			this->mutate();
@@ -245,4 +251,11 @@ void GA::run()
 	}
 	this->population[0].print_me();
 	if (this->population[0].problem.size() > 0) std::cout << this->population[0].problem[0] << std::endl;
+*/
+	std::cout << "-----------" << std::endl;
+
+	this->cross_over();
+	this->new_population[0].print_me();
+	this->new_population[1].print_me();
+
 }
