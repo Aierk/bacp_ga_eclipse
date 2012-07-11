@@ -19,12 +19,14 @@ public:
 	void initial_population();
 	virtual ~GA();
 	void elite();
+	void print_elite();
 	void set_rfitness();
 	void print_population();
 	void print_new_population();
 	vector <int> select_subject();
 	void to_new_pop(vector <int> c);
 	void mutate();
+	void mutate_blind();
 	void cross_over();
 	void run();
 protected:

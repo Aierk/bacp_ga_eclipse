@@ -37,7 +37,7 @@ std::string Helper::trim(std::string const& source)
 
 void string_vector(vector<string> myvector)
 {
-        for (int i = 0; i < myvector.size(); i++)
+        for (size_t i = 0; i < myvector.size(); i++)
         {
                 cout << "Vector[" << i << "] = " << myvector[i] << endl;
         }
@@ -45,19 +45,19 @@ void string_vector(vector<string> myvector)
 
 void Helper::print_int_vector(std::vector<int> myvector)
 {
-        for (int i = 0; i < myvector.size(); i++)
+        for (size_t i = 0; i < myvector.size(); i++)
         {
                 cout << "Vector[" << i << "] = " << myvector[i] << endl;
         }
 }
 void Helper::print_vector_vector_int(std::vector< std::vector<int> > matrix)
 {
-    for (int i = 0; i < matrix.size(); i++)
+    for (size_t i = 0; i < matrix.size(); i++)
     {
         if (matrix[i].size() != 0)
         {
             cout << "Ramo[" << i << "]: ";
-            for (int j=0; j < matrix[i].size(); j++)
+            for (size_t j=0; j < matrix[i].size(); j++)
             {
                 cout << matrix[i][j] << ",";
             }
@@ -67,7 +67,7 @@ void Helper::print_vector_vector_int(std::vector< std::vector<int> > matrix)
 }
 int Helper::find_in_string_vector(std::string lost, std::vector<std::string> place)
 {
-        for (int i=0; i< place.size(); i++)
+        for (size_t i=0; i< place.size(); i++)
         {
                 if ( place[i].compare(lost) == 0) return i;
         }

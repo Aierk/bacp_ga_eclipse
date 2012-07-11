@@ -24,7 +24,7 @@ Config::Config(char const* path) {
 	getData();
 	max_period.resize(courses.size());
 	this->max_balance = 0.0;
-	for (int i = 0; i < courses.size(); i++)
+	for (size_t i = 0; i < courses.size(); i++)
 	{
 		max_period[i] = 0;
 	}
@@ -193,6 +193,8 @@ void Config::printParameters()
 	cout << "Max load: " << max_load << endl;
 	cout << "Min Courses: " << min_courses << endl;
 	cout << "Max Courses: " << max_courses << endl;
+	cout << "Max Balance:" << this->max_balance << endl;
+	return;
 	cout << "Ramos Leidos:" << endl;
 	for (vector<string>::size_type i=0; i < courses.size(); i++)
 		{
@@ -208,7 +210,7 @@ void Config::printParameters()
 
 void Config::calc_min_period()
 {
-	for (int i = 0; i < courses.size(); i++)
+	for (size_t i = 0; i < courses.size(); i++)
 	{
 		post_req(i,0);
 	}
@@ -221,7 +223,7 @@ void Config::post_req(int course, int actual)
 	{
 		return;
 	}
-	for (int i=0; i < prereq[course].size(); i++)
+	for (size_t i=0; i < prereq[course].size(); i++)
 	{
 		post_req(prereq[course][i],actual +1);
 	}

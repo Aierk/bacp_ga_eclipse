@@ -31,10 +31,11 @@ public:
 	void Fitness();
 	vector <int> credits_per_period;
 	void re_calc_stats();
+	int max_period_load;
 protected:
 	Config* config;
 	bool is_ready();
-	int calc_all_done();
+	void calc_all_done();
 	bool all_min_ok(int p);
 	void calc_credits_per_period();
 };

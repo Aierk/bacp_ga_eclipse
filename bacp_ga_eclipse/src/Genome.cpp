@@ -25,9 +25,10 @@ Genome::Genome(vector <int> adn, Config* c)
 	this->r_fitness = 0.0;
 	this->i_fitness = 0.0;
 	this->all_done = 0;
+	this->max_period_load = 0;
 	this->config = c;
 	Chromosome.resize(config->courses.size());
-	for (int  i = 0; i< c->courses.size(); i++)
+	for (size_t  i = 0; i< c->courses.size(); i++)
 	{
 		Chromosome[i] = adn[i];
 	}
@@ -46,9 +47,10 @@ Genome::Genome(Config* c ) {
 	this->c_fitness = 0.0;
 	this->fitness = 0.0;
 	this->r_fitness = 0.0;
+	this->max_period_load = 0;
 	this->i_fitness = 0.0;
 	Chromosome.resize(config->courses.size());
-	for (int  i = 0; i< c->courses.size(); i++)
+	for (size_t  i = 0; i< c->courses.size(); i++)
 	{
 		Chromosome[i] = 0;
 	}
@@ -66,13 +68,13 @@ void Genome::gen_chromosome()
 	for (int i = 1; i <= config->periods; i++) //Iterecion periodo
 	{
 		vector<int> ramos_instanciables;
-		for (int j =0; j < config->courses.size(); j++) // iteración de ramos
+		for (size_t j =0; j < config->courses.size(); j++) // iteración de ramos
 		{
 			if (Chromosome[j] != 0) continue; //ramo instanciado, nada que hacer
 
 			if (config->prereq[j].size() != 0) //Tiene prerequisitos
 			{
-				for (int k=0; k < config->prereq[j].size(); k++) //  iteracion en prerquisitos
+				for (size_t k=0; k < config->prereq[j].size(); k++) //  iteracion en prerquisitos
 				{
 					if (Chromosome[config->prereq[j][k]] == 0 || Chromosome[config->prereq[j][k]] == i) // Un prerequisito no instanciado salimos de for de ramos
 					{
@@ -116,6 +118,8 @@ void Genome::print_me()
 	cout << "R.Fitness: " << this->r_fitness << endl;
 	cout << "C.Fitness: " << this->c_fitness << endl;
 	cout << "Castigos:" << this->castigos << endl;
+	cout << "Max Load:" << this->max_period_load << endl;
+	cout << "AllDone:" << this->all_done << endl;
 	for (int i = 1; i <= config->periods; i++)
 	{
 		cout << "Periodo " << i << " : ";
@@ -131,7 +135,7 @@ void Genome::print_me()
 
 bool Genome::is_ready()
 {
-	for (int i=0; i < Chromosome.size();i++)
+	for (size_t i=0; i < Chromosome.size();i++)
 	{
 		if (Chromosome[i] == 0)
 		{
@@ -141,13 +145,14 @@ bool Genome::is_ready()
 	return true;
 }
 
-int Genome::calc_all_done()
+void Genome::calc_all_done()
 {
 	all_done = 0;
 	for (size_t i = 0; i < Chromosome.size(); i++)
 	{
 		if(Chromosome[i] == 0) all_done++;
 	}
+
 }
 
 void Genome::calc_credits_per_period()
@@ -160,11 +165,16 @@ void Genome::calc_credits_per_period()
 	{
 		this->credits_per_period[this->Chromosome[i]] = this->credits_per_period[this->Chromosome[i]] + this->config->credits[i];
 	}
+	for (size_t i=1; i < this->credits_per_period.size(); i++) //el largo es +1;
+	{
+		if (this->credits_per_period[i] > this->max_period_load)
+			this->max_period_load = this->credits_per_period[i];
+	}
 }
 bool Genome::all_min_ok(int p)
 {
 	this->calc_credits_per_period();
-	for (size_t i=1; i < this->credits_per_period.size(); i++)
+	for (size_t i=1; i <= this->credits_per_period.size(); i++)
 	{
 		if ( this->credits_per_period[i] < this->config->min_load && this->credits_per_period[p] >= this->config->min_load) return false;
 
@@ -205,7 +215,7 @@ void Genome::gen_new()
 					}
 				}
 				if (!allgood) continue; // No agregar como curso posible.
-				if (config->periods - i < config->max_period[j]) continue;
+				if (config->periods - i < config->max_period[j]) continue; //arbol de dependencia
 				//En este punto, No esta instanciado y sus requisitos estan OK. Se agrega al arreglo de posibles
 				ramos_instanciables.push_back(j);
 			} // Fin de la creación de ramos instanciables.
@@ -260,7 +270,7 @@ void Genome::Fitness()
 	float current_fitness = 0.0;
 	this->castigos = 0;
 	this->calc_credits_per_period();
-	for (size_t i=0; i < this->credits_per_period.size(); i++)
+	for (size_t i=1; i < this->credits_per_period.size(); i++) //parte de 1 y tiene largo +1
 	{
 		float temp;
 		temp = this->config->max_balance - this->credits_per_period[i];
@@ -301,7 +311,7 @@ void Genome::Fitness()
 	}
 
 	//Inversor de fitness para invertir min a max.
-	this->fitness = this->fitness + this->fitness * (this->castigos/10) + 2*this->castigos;
+	this->fitness = this->fitness + this->fitness * (this->castigos/10) + 4*this->castigos;
 	this->i_fitness = 1 / this->fitness;
 }
 
