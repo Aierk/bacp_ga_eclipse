@@ -24,10 +24,13 @@ Config::Config(char const* path) {
 	getData();
 	max_period.resize(courses.size());
 	this->max_balance = 0.0;
+	this->skeleton.resize(this->courses.size());
 	for (size_t i = 0; i < courses.size(); i++)
 	{
 		max_period[i] = 0;
+		this->skeleton[i] = 0;
 	}
+	this->draw_skeleton();
 }
 
 Config::~Config() {
@@ -226,5 +229,20 @@ void Config::post_req(int course, int actual)
 	for (size_t i=0; i < prereq[course].size(); i++)
 	{
 		post_req(prereq[course][i],actual +1);
+	}
+}
+
+void Config::draw_skeleton()
+{
+	for(size_t i=0; i < this->prereq.size(); i++)
+	{
+		if(this->prereq[i].size() != 0)
+		{
+			this->skeleton[i] = 1;
+			for (size_t j = 0; j < this->prereq[i].size(); j++)
+			{
+				this->skeleton[this->prereq[i][j]] = 1;
+			}
+		}
 	}
 }

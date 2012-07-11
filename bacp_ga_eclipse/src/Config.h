@@ -37,6 +37,8 @@ public:
 	void calc_min_period();
 	float max_balance;
 	void calc_max_balance();
+	vector <int> skeleton;
+	void draw_skeleton();
 
 protected:
 	char* file_path;
