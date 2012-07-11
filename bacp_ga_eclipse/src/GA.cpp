@@ -167,6 +167,7 @@ void GA::mutate_blind()
 		{
 			p = rand()%1000 / 1000.0;
 			if (p > this->mutate_ok) continue; //probabilidad para cada cromosoma
+			periodo = (rand()%this->config->periods) + 1;
 			while (periodo == g.Chromosome[i])
 			{
 				periodo = (rand()%this->config->periods) + 1;
@@ -195,6 +196,7 @@ void GA::cross_over()
 
 
 		int pos = rand()% (int)a.size();
+		while(pos == 0 || pos == (int)a.size() -1 ) pos = rand()% (int)a.size();
 
 		for (int i=0; i < (int) a.size(); i++)
 		{
@@ -224,7 +226,7 @@ void GA::run()
 	{
 		std::cout << "Gen(" << generation << "): ";
 		this->print_elite();
-		this->elite();
+		//this->elite();
 		while ((int)this->new_population.size() != this->size)
 		{
 			this->mutate();
