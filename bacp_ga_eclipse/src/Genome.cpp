@@ -174,7 +174,7 @@ void Genome::calc_credits_per_period()
 bool Genome::all_min_ok(int p)
 {
 	this->calc_credits_per_period();
-	for (size_t i=1; i <= this->credits_per_period.size(); i++)
+	for (size_t i=1; i < this->credits_per_period.size(); i++)
 	{
 		if ( this->credits_per_period[i] < this->config->min_load && this->credits_per_period[p] >= this->config->min_load) return false;
 
@@ -292,9 +292,9 @@ void Genome::Fitness()
 			if (this->Chromosome[this->config->prereq[i][j]] >= this->Chromosome[i]) prereq_broken = prereq_broken +1;
 		}
 	}
-	this->fitness = this->fitness + 15*(prereq_broken);
+	this->fitness = this->fitness + this->config->max_balance*(prereq_broken);
 	this->castigos = prereq_broken;
-	if(prereq_broken != 0) this->problem.push_back("rereq");
+	if(prereq_broken != 0) this->problem.push_back("rereq"); //sacar
 
 	for (size_t i =1; i < this->credits_per_period.size(); i++)
 	{
