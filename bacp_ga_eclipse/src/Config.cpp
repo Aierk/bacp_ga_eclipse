@@ -31,6 +31,7 @@ Config::Config(char const* path) {
 		this->skeleton[i] = 0;
 	}
 	this->draw_skeleton();
+	this->count_fitness = 0;
 }
 
 Config::~Config() {

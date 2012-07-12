@@ -17,6 +17,7 @@ GA::GA(int s, int g, Config* c, float mut, float cross) {
 	this->config = c;
 	this->mutate_ok = mut;
 	this->cross_over_ok = cross;
+	this->elite_restart = 0.0;
 	//this->new_population.resize(this->size);
 	//this->population.reserve(this->size);
 }
@@ -70,8 +71,10 @@ void GA::print_elite()
 		if (this->population[i].fitness == min)
 		{
 			std::cout << this->population[i].fitness << " ";
+			std::cout << this->population[i].my_count << " ";
 			std::cout << "- Castigos: " << this->population[i].castigos;
 			std::cout << "- Max load: " << this->population[i].max_period_load << std::endl;
+			this->elite_restart = this->population[i].fitness;
 			return;
 		}
 	}
@@ -161,23 +164,38 @@ void GA::mutate()
 
 void GA::mutate_blind()
 {
+	int counter = 0;
 	float p = rand()%1000 / 1000.0;
 	if (p <= this->mutate_ok)
 	{
 		Genome g (this->select_subject(),this->config);
 		int periodo = 0;
 		size_t g_size = g.Chromosome.size();
+		p = rand()%1000 / 1000.0;
 		for (size_t i=0; i < g_size; i++)
 		{
-			p = rand()%1000 / 1000.0;
+			//if(this->config->skeleton[i] == 1) continue;
+
 			if (p > this->mutate_ok) continue; //probabilidad para cada cromosoma
 			periodo = (rand()%this->config->periods) + 1;
 			while (periodo == g.Chromosome[i])
 			{
 				periodo = (rand()%this->config->periods) + 1;
 			}
-			g.Chromosome[i] = periodo;
-			g.re_calc_stats();
+			Genome test (g.Chromosome,this->config);
+			test.Chromosome[i] = periodo;
+			test.re_calc_stats();
+			if(test.fitness > g.fitness && counter != 4)
+			{
+				i--;
+				counter++;
+			}else
+			{
+				counter = 0;
+				g.Chromosome[i] = periodo;
+				g.re_calc_stats();
+				p = rand()%1000 / 1000.0;
+			}
 		}
 
 		this->to_new_pop(g.Chromosome);
@@ -275,26 +293,52 @@ void GA::run()
 {
 	this->initial_population();
 	this->set_rfitness();
-
+	this->print_population();
+	float last_elite = -1.0;
 	int generation = 1;
+	/*int n = 0;
+	int m = 0;
+	float orignal_mutate = this->mutate_ok;*/
 	while(generation <= this->generations)
 	{
 		std::cout << "Gen(" << generation << "): ";
+
 		this->print_elite();
 		this->elite();
+		/*(last_elite == this->elite_restart) ? n++ : m++;
+
+		if (n>15)
+		{
+			n=0;
+			std::cout << "NO ELITE" << std::endl;
+			//this->mutate_ok = this->mutate_ok * 2;
+		}else {
+			//this->elite();
+			if (m > 3)
+			{
+				std::cout << "Restart MUT" << std::endl;
+				m = 0;
+				this->mutate_ok = orignal_mutate;
+			}
+
+		}*/
+
+
 		while ((int)this->new_population.size() != this->size)
 		{
-			this->mutate();
+			//this->mutate();
 			this->cross_over_period();
 			//this->cross_over();
-			//this->mutate_blind();
+			this->mutate_blind();
 		}
 		this->population.clear();
 		this->population = this->new_population;
 		this->set_rfitness();
 		this->new_population.clear();
 		generation++;
+		last_elite = this->elite_restart;
 	}
 	this->elite();
 	this->new_population[0].print_me();
+
 }

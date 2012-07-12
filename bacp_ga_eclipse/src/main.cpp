@@ -24,7 +24,7 @@ int main (int argc, char const *argv[])
 	conf.calc_max_balance();
 
 	//50,60,0.4,07 se ve bien
-	GA metodo (40,200, &conf, 0.2, 0.8);
+	GA metodo (40,100, &conf, 0.5, 0.7);
 	metodo.run();
 	conf.printParameters();
 }

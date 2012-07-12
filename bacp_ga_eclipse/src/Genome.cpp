@@ -19,6 +19,7 @@ Genome::Genome(){
 
 Genome::Genome(vector <int> adn, Config* c)
 {
+	this->my_count = 0;
 	this->castigos = 0;
 	this->c_fitness = 0.0;
 	this->fitness = 0.0;
@@ -41,6 +42,7 @@ Genome::Genome(vector <int> adn, Config* c)
 }
 
 Genome::Genome(Config* c ) {
+	this->my_count = 0;
 	this->castigos = 0;
 	all_done = 0;
 	config = c;
@@ -120,6 +122,7 @@ void Genome::print_me()
 	cout << "Castigos:" << this->castigos << endl;
 	cout << "Max Load:" << this->max_period_load << endl;
 	cout << "AllDone:" << this->all_done << endl;
+	cout << "Fitness count" << this->my_count << endl;
 	for (int i = 1; i <= config->periods; i++)
 	{
 		cout << "Periodo " << i << " : ";
@@ -267,6 +270,8 @@ void Genome::gen_new()
 
 void Genome::Fitness()
 {
+	this->config->count_fitness++;
+	this->my_count = this->config->count_fitness;
 	float current_fitness = 0.0;
 	this->castigos = 0;
 	this->calc_credits_per_period();

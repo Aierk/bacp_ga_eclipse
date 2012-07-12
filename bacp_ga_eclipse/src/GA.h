@@ -37,6 +37,7 @@ protected:
 	float mutate_ok;
 	float cross_over_ok;
 	Helper helper;
+	float elite_restart;
 };
 
 #endif /* GA_H_ */

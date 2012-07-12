@@ -39,6 +39,7 @@ public:
 	void calc_max_balance();
 	vector <int> skeleton;
 	void draw_skeleton();
+	int count_fitness;
 
 protected:
 	char* file_path;

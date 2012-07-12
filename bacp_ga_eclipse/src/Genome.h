@@ -33,12 +33,14 @@ public:
 	void re_calc_stats();
 	int max_period_load;
 	vector <string> problem;
+	int my_count;
 protected:
 	Config* config;
 	bool is_ready();
 	void calc_all_done();
 	bool all_min_ok(int p);
 	void calc_credits_per_period();
+
 };
 
 #endif /* GENOME_H_ */
