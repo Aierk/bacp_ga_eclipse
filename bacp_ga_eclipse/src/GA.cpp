@@ -2,7 +2,7 @@
  * GA.cpp
  *
  *  Created on: 08/07/2012
- *      Author: smorales
+ *      Author: Sergio A. Morales
  */
 
 #include "GA.h"
@@ -18,22 +18,20 @@ GA::GA(int s, int g, Config* c, float mut, float cross) {
 	this->mutate_ok = mut;
 	this->cross_over_ok = cross;
 	this->elite_restart = 0.0;
-	//this->new_population.resize(this->size);
-	//this->population.reserve(this->size);
 }
 
 GA::~GA() {
-	// TODO Auto-generated destructor stub
 }
 
 void GA::initial_population()
 {
+	/* Generar una poblacion donde todos los ramos esten instanciados */
 	int i = 0;
 	while(i < this->size)
 	{
 		Genome g (this->config);
 		g.gen_new();
-		if(g.all_done == 0)
+		if(g.faltan_por_instanciar == 0)
 		{
 			this->population.push_back(g);
 			i++;
@@ -43,6 +41,7 @@ void GA::initial_population()
 }
 void GA::elite()
 {
+	/* Busca el mejor y lo agrega la siguiente generación */
 	float min = 0.0;
 	min = this->population[0].fitness;
 	for(int i=1; i < this->size; i++ )
@@ -60,6 +59,7 @@ void GA::elite()
 }
 void GA::print_elite()
 {
+	/* Busca el mejor e imprime la data importante */
 	float min = 0.0;
 	min = this->population[0].fitness;
 	for(int i=1; i < this->size; i++ )
@@ -72,8 +72,10 @@ void GA::print_elite()
 		{
 			std::cout << this->population[i].fitness << " ";
 			std::cout << this->population[i].my_count << " ";
-			std::cout << "- Castigos: " << this->population[i].castigos;
-			std::cout << "- Max load: " << this->population[i].max_period_load << std::endl;
+			//std::cout << "- Castigos: " << this->population[i].castigos;
+			//std::cout << "- Max load: " << this->population[i].max_period_load << std::endl;
+			std::cout << this->population[i].castigos << " ";
+			std::cout << this->population[i].max_period_load << std::endl;
 			this->elite_restart = this->population[i].fitness;
 			return;
 		}
@@ -82,6 +84,7 @@ void GA::print_elite()
 
 void GA::set_rfitness()
 {
+	/* Genera la torta para la selección */
 	float total = 0.0;
 	for(int i=0; i < this->size; i++ ) //suma inicial de todos los fitness
 	{
@@ -101,6 +104,7 @@ void GA::set_rfitness()
 
 void GA::print_population()
 {
+	/* Imprime soluciones de la generación actual */
 	for(int i=0; i < this->size; i++ )
 	{
 		this->population[i].print_me();
@@ -108,6 +112,7 @@ void GA::print_population()
 }
 void GA::print_new_population()
 {
+	/* Imprime soluciones de la siguiente generación */
 	for(size_t i=0; i < this->new_population.size(); i++ )
 	{
 		this->new_population[i].print_me();
@@ -115,6 +120,7 @@ void GA::print_new_population()
 }
 vector <int> GA::select_subject()
 {
+	/* Utilizando la torta, selecciona un individuo */
 
 	float p = rand()%1000 / 1000.00;
 	if ( p < this->population[0].c_fitness) return this->population[0].Chromosome;
@@ -130,6 +136,7 @@ vector <int> GA::select_subject()
 }
 void GA::to_new_pop(vector <int> c)
 {
+	/* Toma un cromosoma, lo convierte en Genome y lo agrega a la siguiente generacion */
 	if ((int) this->new_population.size() >= size) return;
 	Genome g (c,this->config);
 	this->new_population.push_back(g);
@@ -137,6 +144,9 @@ void GA::to_new_pop(vector <int> c)
 
 void GA::mutate()
 {
+	/*Mutación simple.
+	 * Contiene posibles mejoras utilizadas en los experimentos
+	 */
 	float p = rand()%1000 / 1000.0;
 	if (p <= this->mutate_ok)
 	{
@@ -152,8 +162,8 @@ void GA::mutate()
 			{
 				periodo = (rand()%this->config->periods) + 1;
 			}
-			if (g.credits_per_period[periodo] < this->config->min_load) continue; // si ya tiene muy pocos.
-			if (g.credits_per_period[periodo] > this->config->max_load) continue; // si ya tiene muchos
+			//if (g.credits_per_period[periodo] < this->config->min_load) continue; // si ya tiene muy pocos.
+			//if (g.credits_per_period[periodo] > this->config->max_load) continue; // si ya tiene muchos
 			g.Chromosome[i] = periodo;
 			g.re_calc_stats();
 		}
@@ -162,8 +172,13 @@ void GA::mutate()
 	}
 }
 
-void GA::mutate_blind()
+void GA::mutate_smart()
 {
+	/*
+	 * Mutación inteligente con respecto a los prerequisitos
+	 * Se aplica a todos una vez activada la tasa de mutacion
+	 * Intenta mejoras 4 veces, si no muta igual
+	 */
 	int counter = 0;
 	float p = rand()%1000 / 1000.0;
 	if (p <= this->mutate_ok)
@@ -174,9 +189,7 @@ void GA::mutate_blind()
 		p = rand()%1000 / 1000.0;
 		for (size_t i=0; i < g_size; i++)
 		{
-			//if(this->config->skeleton[i] == 1) continue;
-
-			if (p > this->mutate_ok) continue; //probabilidad para cada cromosoma
+			if(this->config->skeleton[i] == 1) continue;
 			periodo = (rand()%this->config->periods) + 1;
 			while (periodo == g.Chromosome[i])
 			{
@@ -204,6 +217,9 @@ void GA::mutate_blind()
 
 void GA::cross_over()
 {
+/*
+ * Cross_over simple en un punto del cromosoma
+ */
 	float p = rand()%1000 / 1000.0;
 	if (p <= this->cross_over_ok)
 	{
@@ -228,7 +244,7 @@ void GA::cross_over()
 				d[i] = b[i];
 			}
 			else
-			{
+			{	/* Tener en cuenta el equeleto a la hora de cruzar */
 				if(this->config->skeleton[i] == 0){
 					d[i] = a[i];
 					c[i] = b[i];
@@ -237,16 +253,21 @@ void GA::cross_over()
 					c[i] = a[i];
 					d[i] = b[i];
 				}
+
 			}
 		}
 		this->to_new_pop(c);
 		this->to_new_pop(d);
-
 	}
 }
 
+
 void GA::cross_over_period()
 {
+	/*
+	 * Cruza por periodo
+	 * Inteligente con respecto al esqueleto
+	 */
 	float p = rand()%1000 / 1000.0;
 	if (p > this->cross_over_ok) return;
 	// C herada fuertemente de a
@@ -293,16 +314,18 @@ void GA::run()
 {
 	this->initial_population();
 	this->set_rfitness();
-	this->print_population();
-	float last_elite = -1.0;
 	int generation = 1;
-	/*int n = 0;
+
+	float last_elite;
+	last_elite = -1.0;
+
+	/*
+	int n = 0;
 	int m = 0;
 	float orignal_mutate = this->mutate_ok;*/
 	while(generation <= this->generations)
 	{
-		std::cout << "Gen(" << generation << "): ";
-
+		std::cout << generation << " ";
 		this->print_elite();
 		this->elite();
 		/*(last_elite == this->elite_restart) ? n++ : m++;
@@ -310,18 +333,16 @@ void GA::run()
 		if (n>15)
 		{
 			n=0;
-			std::cout << "NO ELITE" << std::endl;
-			//this->mutate_ok = this->mutate_ok * 2;
+			this->mutate_ok = this->mutate_ok * 2;
 		}else {
-			//this->elite();
+			this->elite();
 			if (m > 3)
 			{
-				std::cout << "Restart MUT" << std::endl;
 				m = 0;
 				this->mutate_ok = orignal_mutate;
 			}
 
-		}*/
+		}*/ // Experimentos de reset de elitismo y mutacion
 
 
 		while ((int)this->new_population.size() != this->size)
@@ -329,7 +350,7 @@ void GA::run()
 			//this->mutate();
 			this->cross_over_period();
 			//this->cross_over();
-			this->mutate_blind();
+			this->mutate_smart();
 		}
 		this->population.clear();
 		this->population = this->new_population;
@@ -338,7 +359,4 @@ void GA::run()
 		generation++;
 		last_elite = this->elite_restart;
 	}
-	this->elite();
-	this->new_population[0].print_me();
-
 }

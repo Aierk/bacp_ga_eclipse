@@ -2,7 +2,7 @@
  * Genome.cpp
  *
  *  Created on: 01-07-2012
- *      Author: sergio
+ *      Author: Sergio A. Morales
  */
 
 #include "Genome.h"
@@ -25,7 +25,7 @@ Genome::Genome(vector <int> adn, Config* c)
 	this->fitness = 0.0;
 	this->r_fitness = 0.0;
 	this->i_fitness = 0.0;
-	this->all_done = 0;
+	this->faltan_por_instanciar = 0;
 	this->max_period_load = 0;
 	this->config = c;
 	Chromosome.resize(config->courses.size());
@@ -44,7 +44,7 @@ Genome::Genome(vector <int> adn, Config* c)
 Genome::Genome(Config* c ) {
 	this->my_count = 0;
 	this->castigos = 0;
-	all_done = 0;
+	faltan_por_instanciar = 0;
 	config = c;
 	this->c_fitness = 0.0;
 	this->fitness = 0.0;
@@ -61,57 +61,8 @@ Genome::Genome(Config* c ) {
 }
 
 Genome::~Genome() {
-	// TODO Auto-generated destructor stub
 }
 
-void Genome::gen_chromosome()
-{
-	srand(time(0));
-	for (int i = 1; i <= config->periods; i++) //Iterecion periodo
-	{
-		vector<int> ramos_instanciables;
-		for (size_t j =0; j < config->courses.size(); j++) // iteración de ramos
-		{
-			if (Chromosome[j] != 0) continue; //ramo instanciado, nada que hacer
-
-			if (config->prereq[j].size() != 0) //Tiene prerequisitos
-			{
-				for (size_t k=0; k < config->prereq[j].size(); k++) //  iteracion en prerquisitos
-				{
-					if (Chromosome[config->prereq[j][k]] == 0 || Chromosome[config->prereq[j][k]] == i) // Un prerequisito no instanciado salimos de for de ramos
-					{
-						continue;
-					}
-				}
-			}
-			if (config->periods - i < config->max_period[j]) continue;
-			//En este punto, No esta instanciado y sus requisitos estan OK. Se agrega al arreglo de posibles
-			ramos_instanciables.push_back(j);
-		} // Fin de la creación de ramos instanciables.
-
-		//Iniciamos la instanciación
-
-		int total_creditos = 0;
-		int total_ramos = 0;
-
-		while(ramos_instanciables.size() != 0)
-		{
-			int pos_candidato = rand()%ramos_instanciables.size();
-			int candidato = ramos_instanciables[pos_candidato];
-			if (total_creditos + config->credits[candidato] > config->max_load) {}
-			else if (total_ramos + 1 > config->max_courses) {}
-			else
-			{
-				Chromosome[candidato] = i;
-				total_ramos = total_ramos + 1;
-				total_creditos = total_creditos + config->credits[candidato];
-				cout << i << ": " << config->courses[candidato] << endl;
-			}
-			ramos_instanciables.erase(ramos_instanciables.begin()+pos_candidato);
-		}
-	}
-
-}
 
 void Genome::print_me()
 {
@@ -121,7 +72,7 @@ void Genome::print_me()
 	cout << "C.Fitness: " << this->c_fitness << endl;
 	cout << "Castigos:" << this->castigos << endl;
 	cout << "Max Load:" << this->max_period_load << endl;
-	cout << "AllDone:" << this->all_done << endl;
+	cout << "AllDone:" << this->faltan_por_instanciar << endl;
 	cout << "Fitness count" << this->my_count << endl;
 	for (int i = 1; i <= config->periods; i++)
 	{
@@ -138,6 +89,7 @@ void Genome::print_me()
 
 bool Genome::is_ready()
 {
+	//Todo instanciado?
 	for (size_t i=0; i < Chromosome.size();i++)
 	{
 		if (Chromosome[i] == 0)
@@ -150,11 +102,12 @@ bool Genome::is_ready()
 
 void Genome::calc_all_done()
 {
-	all_done = 0;
+	faltan_por_instanciar = 0;
 	for (size_t i = 0; i < Chromosome.size(); i++)
 	{
-		if(Chromosome[i] == 0) all_done++;
+		if(Chromosome[i] == 0) faltan_por_instanciar++;
 	}
+	//Contar ramos que faltan por instanciar
 
 }
 
@@ -176,6 +129,7 @@ void Genome::calc_credits_per_period()
 }
 bool Genome::all_min_ok(int p)
 {
+	//Funcion que busca asegurar requerimientos minimos
 	this->calc_credits_per_period();
 	for (size_t i=1; i < this->credits_per_period.size(); i++)
 	{
@@ -192,7 +146,7 @@ void Genome::gen_new()
 
 	bool problem = false;
 	int sum_restantes = 0;//Almacena la suma de weas sin instanciar
-	sum_restantes = all_done;
+	sum_restantes = faltan_por_instanciar;
 	while(!is_ready())
 	{
 		for (int i = 1; i <= config->periods; i++) //Iterecion periodo
@@ -259,8 +213,8 @@ void Genome::gen_new()
 			}
 		}
 		calc_all_done();
-		if(all_done == sum_restantes) break; //Si en un ciclo completo no se instancio nada.. no se encontro solucin
-		sum_restantes = all_done; //Actualiza el valor del # de ramos sin instanciar despues deun ciclo completo
+		if(faltan_por_instanciar == sum_restantes) break; //Si en un ciclo completo no se instancio nada.. no se encontro solucin
+		sum_restantes = faltan_por_instanciar; //Actualiza el valor del # de ramos sin instanciar despues deun ciclo completo
 		if(problem) break;
 	}
 
@@ -286,7 +240,7 @@ void Genome::Fitness()
 	this->fitness = current_fitness;
 	this->calc_all_done(); 	// Al done es el numero de ramos no instanciados.
 
-	this->fitness = this->fitness + this->fitness*(this->all_done/10); //castigo por ramos no instanciados
+	this->fitness = this->fitness + this->fitness*(this->faltan_por_instanciar/10); //castigo por ramos no instanciados
 
 	int prereq_broken = 0;
 	for (size_t i = 0; i < this->Chromosome.size(); i++)
@@ -317,7 +271,7 @@ void Genome::Fitness()
 	}
 
 	//Inversor de fitness para invertir min a max.
-	this->fitness = this->fitness*(1+this->castigos);
+	this->fitness = this->fitness+this->castigos;
 	this->i_fitness = 1 / this->fitness;
 }
 
@@ -327,7 +281,7 @@ void Genome::re_calc_stats()
 	this->fitness = 0.0;
 	this->r_fitness = 0.0;
 	this->i_fitness = 0.0;
-	this->all_done = 0;
+	this->faltan_por_instanciar = 0;
 	this->calc_credits_per_period();
 	this->calc_all_done();
 	this->Fitness();

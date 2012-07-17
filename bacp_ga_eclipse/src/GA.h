@@ -26,7 +26,7 @@ public:
 	vector <int> select_subject();
 	void to_new_pop(vector <int> c);
 	void mutate();
-	void mutate_blind();
+	void mutate_smart();
 	void cross_over();
 	void cross_over_period();
 	void run();

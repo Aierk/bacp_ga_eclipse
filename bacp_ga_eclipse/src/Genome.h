@@ -24,10 +24,9 @@ public:
 	float i_fitness;
 	int castigos;
 	void set_fitness();
-	void gen_chromosome();
 	void gen_new();
 	void print_me();
-	int all_done;
+	int faltan_por_instanciar;
 	void Fitness();
 	vector <int> credits_per_period;
 	void re_calc_stats();
